@@ -1,3 +1,5 @@
+import * as acts from "../actions";
+
 const api = "http://localhost:3001";
 
 //Unique toke generation
@@ -12,8 +14,12 @@ const headers = {
   Authorization: token
 };
 
-export const getCategories = () => 
-  fetch(`${api}/categories`, { headers }).then(res => res.json()).then(cat => cat.categories)
+export const doGetCategories = () => dispatch =>
+  fetch(`${api}/categories`, { headers })
+    .then(res => res.json())
+    .then(cat => dispatch(acts.getCategories(cat.categories)));
 
-  export const getPosts = () => 
-  fetch(`${api}/posts`, { headers }).then(res => res.json()).then(posts => posts)
+export const doGetPosts = () => dispatch =>
+  fetch(`${api}/posts`, { headers })
+    .then(res => res.json())
+    .then(posts => dispatch(acts.getPosts(posts)));

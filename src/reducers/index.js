@@ -1,17 +1,18 @@
-export const actions = {
-    NEW_POST_REQUEST: "NEW_POST_REQUEST"
-}
-
+import { actionTypes } from '../actions/'
 
 const post =  (state = {}, action) => {
     switch (action.type) {
-      case actions.NEW_POST_REQUEST :
-        const { recipe } = action
-  
+      case actionTypes.POSTLIST :
         return {
           ...state,
-          [recipe.label]: recipe,
+          posts: action.posts ? action.posts : []
         }
+      case actionTypes.CATEGORYLIST :
+        return {
+          ...state,
+          categories: action.categories ? action.categories : []
+        }
+          
       default :
         return state
     }

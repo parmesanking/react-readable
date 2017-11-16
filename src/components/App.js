@@ -2,47 +2,41 @@ import React, { Component } from "react";
 import { View } from "react-native";
 import { connect } from 'react-redux'
 
-import * as BlogAPI from "../server/dbApi";
-
 import Category from "./Category";
 import Post from "./Post";
 
+import * as BlogAPI from "../server/dbApi";
 
 
 class App extends Component {
-  state = {
-    categories: [],
-    posts: []
-  };
+  
   componentDidMount() {
-    BlogAPI.getCategories().then(cat => {
-      this.setState({ categories: cat });
-    });
-    BlogAPI.getPosts().then(posts => {
-      this.setState({ posts: posts });
-    });
+      this.props.getCategories()
+      this.props.getPosts()
+
   }
   render() {
     return (
       <View>
         <View>
-          {this.state.categories.map(cat => <Category title={cat.name} />)}
+          {this.props.categories.map(cat => <Category key={cat.path} title={cat.name} />)}
         </View>
-        <View>{this.state.posts.map(post => <Post post={post} />)}</View>
+        <View>{this.props.posts.map(post => <Post key={post.id} post={post} />)}</View>
       </View>
     );
   }
 }
 const mapStateToProps = ({ categories, posts }) => {
   return {
-    categories: categories, 
-    posts: posts
+    categories: categories ? categories : [], 
+    posts: posts ? posts : []
   }
 }
 
 const mapDispatchToProps  = (dispatch) => {
   return {
-    doPost: (data) => dispatch(Post(data))
+    getPosts: () => dispatch(BlogAPI.doGetPosts()), 
+    getCategories: () => dispatch(BlogAPI.doGetCategories()), 
   }
 }
 
