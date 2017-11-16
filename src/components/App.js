@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View } from "react-native";
 import { connect } from 'react-redux'
 
-import * as BlogAPI from "./server/dbApi";
+import * as BlogAPI from "../server/dbApi";
 
 import Category from "./Category";
 import Post from "./Post";
@@ -34,7 +34,6 @@ class App extends Component {
   }
 }
 const mapStateToProps = ({ categories, posts }) => {
- 
   return {
     categories: categories, 
     posts: posts

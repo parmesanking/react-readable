@@ -1,7 +1,11 @@
+export const actions = {
+    NEW_POST_REQUEST: "NEW_POST_REQUEST"
+}
+
 
 const post =  (state = {}, action) => {
     switch (action.type) {
-      case NEW_POST_REQUEST :
+      case actions.NEW_POST_REQUEST :
         const { recipe } = action
   
         return {
