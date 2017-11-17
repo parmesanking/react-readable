@@ -1,11 +1,12 @@
-import React from 'react';
-import { Button } from 'react-native';
+import React from "react";
+import { View, Button } from "react-native";
 
 const Category = props => {
-    return (
+  return (
+    <View style={{ marginLeft: 10 }}>
       <Button title={props.title} />
-    );
-  };
-  
-  export default Category;
-  
+    </View>
+  );
+};
+
+export default Category;

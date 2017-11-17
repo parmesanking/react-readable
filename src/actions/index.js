@@ -1,16 +1,14 @@
-import * as BlogAPI from "../server/dbApi";
-
 
 export const actionTypes = {
   NEWPOST: "NEWPOST", 
   POSTLIST: "POSTLIST", 
-  CATEGORYLIST: "CATEGORYLIST"
+  CATEGORYLIST: "CATEGORYLIST",
+  COMMENTS: "COMMENTS"
 
 }
 
 
 export const getCategories = (categories) => {
-  debugger
   return {
     type: actionTypes.CATEGORYLIST,
     categories: categories
@@ -24,14 +22,11 @@ export const getPosts = (posts) => {
   }
 }
 
-
-
-/*
-export const doPost = ({ post }) => {
+export const getComments = (postid, comments) => {
     return {
-      type: NEW_POST,
-      post
+      type: actionTypes.COMMENTS,
+      postid: postid,
+      comments: comments
     }
   }
-*/
 

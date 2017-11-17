@@ -23,3 +23,8 @@ export const doGetPosts = () => dispatch =>
   fetch(`${api}/posts`, { headers })
     .then(res => res.json())
     .then(posts => dispatch(acts.getPosts(posts)));
+
+export const doGetComments = (postid) => dispatch =>
+    fetch(`${api}/posts/${postid}/comments`, { headers })
+      .then(res => res.json())
+      .then(comments => dispatch(acts.getComments(postid, comments)));
