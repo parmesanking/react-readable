@@ -19,12 +19,32 @@ export const doGetCategories = () => dispatch =>
     .then(res => res.json())
     .then(cat => dispatch(acts.getCategories(cat.categories)));
 
-export const doGetPosts = () => dispatch =>
-  fetch(`${api}/posts`, { headers })
+export const doGetPosts = category => dispatch =>
+  fetch(category ? `${api}/${category}/posts` : `${api}/posts`, { headers })
     .then(res => res.json())
     .then(posts => dispatch(acts.getPosts(posts)));
 
-export const doGetComments = (postid) => dispatch =>
-    fetch(`${api}/posts/${postid}/comments`, { headers })
-      .then(res => res.json())
-      .then(comments => dispatch(acts.getComments(postid, comments)));
+export const doGetComments = postid => dispatch =>
+  fetch(`${api}/posts/${postid}/comments`, { headers })
+    .then(res => res.json())
+    .then(comments => dispatch(acts.getComments(postid, comments)));
+
+export const doVotePost = (postid, vote) => dispatch =>
+{
+debugger
+
+ fetch(`${api}/posts/${postid}`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"option": vote > 0 ? 'upVote' : 'downVote' })
+  })
+    .then(res => res.json())
+    .then(post => {
+      debugger
+      console.log(post)
+    })
+    
+  };

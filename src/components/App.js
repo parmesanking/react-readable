@@ -8,18 +8,28 @@ import Post from "./Post";
 import * as BlogAPI from "../server/dbApi";
 
 class App extends Component {
+
+  state={category:''}
+  
   componentDidMount() {
       this.props.getCategories()
-      this.props.getPosts()
-
+      this.props.getPosts(null)
   }
+
+  onCategorySelect(category){
+    this.setState({category:category}, () => this.props.getPosts(category))
+  }
+
+
+
   render() {
     return (
       <View style={{ backgroundColor: "lightGray" }}>
         <View style={{ flex: 1, flexDirection: "row", margin: 10 }}>
-          {this.props.categories.map(cat => (
-            <Category key={cat.path} title={cat.name} />
-          ))}
+          {this.props.categories.map(cat => 
+             <Category key={cat.path} title={cat.name} selected={this.state.category === cat.path} 
+             onCategorySelect={() => this.onCategorySelect(this.state.category === cat.path ? '' : cat.path)}/>
+           )}
         </View>
         <View>
           {this.props.posts.map(post => <Post key={post.id} {...post} />)}
@@ -37,7 +47,7 @@ const mapStateToProps = ({ categories, posts }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getPosts: () => dispatch(BlogAPI.doGetPosts()),
+    getPosts: (category) => dispatch(BlogAPI.doGetPosts(category)),
     getCategories: () => dispatch(BlogAPI.doGetCategories())
   };
 };

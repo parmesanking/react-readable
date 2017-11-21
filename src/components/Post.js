@@ -4,10 +4,16 @@ import { View, Text } from "react-native";
 import moment from 'moment'
 import * as BlogAPI from "../server/dbApi";
 import Comment from './Comment'
+import Voter from './Voter'
 
 class Post extends React.Component {
   componentDidMount(){
     this.props.getComments(this.props.id)
+  }
+  onVote(value){
+    debugger
+    this.props.doVote(this.props.id, value)
+
   }
 
   render (){
@@ -32,7 +38,7 @@ class Post extends React.Component {
         }}
       >
         <Text style={{ fontSize: 16, fontWeight: "bold" }}>{this.props.title}</Text>
-        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{this.props.voteScore}</Text>
+        <Voter value={this.props.voteScore} onVote={(value) => this.onVote(value)}/>
       </View>
       <Text style={{ fontSize: 14, paddingTop: 10 }}>{this.props.body}</Text>
 
@@ -48,7 +54,8 @@ const mapStateToProps = () => {
 const mapDispatchToProps = dispatch => {
 
   return {
-    getComments: (postid) => dispatch(BlogAPI.doGetComments(postid))
+    getComments: (postid) => dispatch(BlogAPI.doGetComments(postid)),
+    doVote: (postid, value) => dispatch(BlogAPI.doVotePost(postid, value))
   };
 };
 

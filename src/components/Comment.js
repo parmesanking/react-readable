@@ -7,7 +7,7 @@ const Comment = props => {
       style={{
         padding: 20,
         margin: 10,
-        backgroundColor: "lightGray",
+        backgroundColor: "#d3d3d3",
         borderRadius: 10,
         borderWidth: 1
       }}
