@@ -1,4 +1,5 @@
 import * as acts from "../actions";
+import { combineReducers } from "../../../Library/Caches/typescript/2.6/node_modules/redux";
 
 const api = "http://localhost:3001";
 
@@ -74,6 +75,30 @@ export const doAddComment = comment => dispatch =>
       "Content-Type": "application/json"
     },
     body: JSON.stringify(comment)
+  })
+    .then(res => res.json())
+    .then(comment => dispatch(acts.getComment(comment)));
+
+export const doEditPost = post => dispatch =>
+  fetch(`${api}/posts/${post.id}`, {
+    method: "PUT",
+    headers: {
+      ...headers,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ timestamp: post.timestamp, title: post.title,body: post.body })
+  })
+    .then(res => res.json())
+    .then(post => dispatch(acts.getPost(post)));
+
+export const doEditComment = comment => dispatch =>
+  fetch(`${api}/comments/${comment.id}`, {
+    method: "PUT",
+    headers: {
+      ...headers,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ timestamp: comment.timestamp, body: comment.body })
   })
     .then(res => res.json())
     .then(comment => dispatch(acts.getComment(comment)));

@@ -15,7 +15,7 @@ export const getCategories = (categories) => {
     categories: categories
   }
 }
-
+  
 export const getPosts = (posts) => {
   return {
     type: actionTypes.POSTLIST,

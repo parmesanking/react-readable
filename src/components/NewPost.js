@@ -17,6 +17,18 @@ class NewPost extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.post) {
+      this.setState({
+        id: nextProps.post.id,
+        author: nextProps.post.author,
+        title: nextProps.post.title,
+        body: nextProps.post.body,
+        category: nextProps.post.category
+      });
+    }
+  }
+
   onCategorySelect(category) {
     category && this.setState({ category: category });
   }
@@ -37,7 +49,9 @@ class NewPost extends React.Component {
     } else if (!this.state.category) {
       alert("Please select a category for your post");
     } else {
-      this.props.onAddPost({ ...this.state, timestamp: Date.now() });
+      this.props.editMode
+        ? this.props.onEditPost({ ...this.state, timestamp: Date.now() })
+        : this.props.onAddPost({ ...this.state, timestamp: Date.now() });
       this.props.onClose();
       this.setState(this.getInitialState());
     }
@@ -47,7 +61,7 @@ class NewPost extends React.Component {
     return (
       <View style={{ padding: 10 }}>
         <Text style={{ marginBottom: 20, fontSize: 16, fontWeight: "bold" }}>
-          Insert your new post
+          {this.props.editMode ? "Edit this post" : "Insert your new post"}
         </Text>
         <TextInput
           style={{
@@ -57,6 +71,7 @@ class NewPost extends React.Component {
             padding: 5,
             marginBottom: 10
           }}
+          editable={!this.props.editMode}
           placeholder="My name here..."
           value={this.state.author}
           onChangeText={text => this.onUserInput("author", text)}
@@ -86,7 +101,7 @@ class NewPost extends React.Component {
         <CategoryList
           categories={this.props.categories}
           value={this.state.category}
-          onCategorySelect={cat => this.onCategorySelect(cat)}
+          onCategorySelect={cat => this.props.editMode ? '' : this.onCategorySelect(cat)}
         />
         <Margin />
         <View

@@ -5,13 +5,16 @@ import moment from "moment";
 import * as BlogAPI from "../server/dbApi";
 import Comment from "./Comment";
 import Voter from "./Voter";
-import {Margin} from "./Utils";
+import { Margin } from "./Utils";
 import TrashIcon from "../static/trash.png";
 import CommentIcon from "../static/comment.jpg";
+import EditIcon from "../static/edit.png";
 
 class Post extends React.Component {
+  state = { showComment: false };
+
   componentDidMount() {
-    this.props.getComments(this.props.id);
+    this.props.getComments(this.props.post.id);
   }
 
   onVote(type, contentId, value) {
@@ -32,7 +35,7 @@ class Post extends React.Component {
         }}
       >
         <Text style={{ fontSize: 12, color: "gray" }}>
-          {moment(this.props.timestamp).format("LL")}
+          {moment(this.props.post.timestamp).format("LL")}
         </Text>
         <View
           style={{
@@ -44,21 +47,25 @@ class Post extends React.Component {
         >
           <View>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              {this.props.title}
+              {this.props.post.title}
             </Text>
             <Text style={{ marginTop: 5, fontSize: 12, color: "gray" }}>
-              by {this.props.author}
+              by {this.props.post.author}
             </Text>
           </View>
         </View>
 
-        <Text style={{ fontSize: 14, paddingTop: 10 }}>{this.props.body}</Text>
-<Margin />
-        {this.props.comments &&
-          this.props.comments.map(comment => (
+        <Text style={{ fontSize: 14, paddingTop: 10 }}>
+          {this.props.post.body}
+        </Text>
+        <Margin />
+        {this.state.showComment && this.props.post.comments &&
+          this.props.post.comments.map(comment => (
             <Comment
               key={comment.id}
-              {...comment}
+              comment={comment}
+              post={this.props.post}
+              onAddComment={this.props.onAddComment}
               onVote={(type, contentId, value) =>
                 this.onVote(type, contentId, value)}
             />
@@ -72,9 +79,9 @@ class Post extends React.Component {
           }}
         >
           <Voter
-            value={this.props.voteScore}
+            value={this.props.post.voteScore}
             type="post"
-            objectid={this.props.id}
+            objectid={this.props.post.id}
             onVote={(type, contentId, value) =>
               this.onVote(type, contentId, value)}
           />
@@ -86,30 +93,25 @@ class Post extends React.Component {
               justifyContent: "flex-end"
             }}
           >
-          {/* Add a comment*/}
-          <TouchableOpacity
-          style={{ marginRight: 10 }}
-          onPress={() => console.log("comment")}
-        >
-          <Image
-            style={{
-              width: 30,
-              height: 30,
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            source={CommentIcon}
-          >
-          
-            <Text style={{ paddingBottom: 6 , fontWeight:'bold'}} color="#d6d6d6">+</Text>
-          
-          </Image>
-        </TouchableOpacity>
-          {/* Expand/Collapse comments*/}
-          {  this.props.commentCount > 0 &&
+            {/* Edit post*/}
             <TouchableOpacity
               style={{ marginRight: 10 }}
-              onPress={() => console.log("comment")}
+              onPress={() => this.props.onAddPost(this.props.post)}
+            >
+              <Image
+                style={{
+                  width: 30,
+                  height: 30,
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+                source={EditIcon}
+              />
+            </TouchableOpacity>
+            {/* Add a comment*/}
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={() => this.props.onAddComment(this.props.post, null)}
             >
               <Image
                 style={{
@@ -120,14 +122,35 @@ class Post extends React.Component {
                 }}
                 source={CommentIcon}
               >
-              
-                <Text style={{ paddingBottom: 6 }} color="#d6d6d6">
-                  {this.props.commentCount}
+                <Text
+                  style={{ paddingBottom: 6, fontWeight: "bold" }}
+                  color="#d6d6d6"
+                >
+                  +
                 </Text>
-              
               </Image>
             </TouchableOpacity>
-          }
+            {/* Expand/Collapse comments*/}
+            {this.props.post.commentCount > 0 && (
+              <TouchableOpacity
+                style={{ marginRight: 10 }}
+                onPress={() => this.setState({showComment: !this.state.showComment})}
+              >
+                <Image
+                  style={{
+                    width: 30,
+                    height: 30,
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                  source={CommentIcon}
+                >
+                  <Text style={{ paddingBottom: 6 }} color="#d6d6d6">
+                    {this.props.post.commentCount}
+                  </Text>
+                </Image>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={{ marginRight: 0 }}
               onPress={() => console.log("pino")}

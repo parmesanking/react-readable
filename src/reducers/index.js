@@ -36,6 +36,9 @@ const post = (state = initialState, action) => {
       posts = state.posts.slice(0);
       let postIx = posts.findIndex(p => p.id === action.post.id);
       if (postIx >= 0) {
+        posts[postIx].author = action.post.author;
+        posts[postIx].title = action.post.title;
+        posts[postIx].body = action.post.body;
         posts[postIx].voteScore = action.post.voteScore;
         posts[postIx].timestamp = action.post.timestamp;
       } else {
@@ -52,14 +55,18 @@ const post = (state = initialState, action) => {
         let comments = posts[postIx].comments.slice(0);
         let commentIx = comments.findIndex(c => c.id === action.comment.id);
         if (commentIx >= 0) {
+          comments[commentIx].author = action.comment.author;
+          comments[commentIx].body = action.comment.body;
           comments[commentIx].voteScore = action.comment.voteScore;
           comments[commentIx].timestamp = action.comment.timestamp;
         } else {
           comments.push(action.comment);
         }
+        
         posts[postIx].comments = comments.sort(
           (a, b) => a.timestamp < b.timestamp
         );
+        posts[postIx].commentCount = posts[postIx].comments.length
       } else {
         console.log("we've got an orphan comment!");
       }
