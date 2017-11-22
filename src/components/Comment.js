@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
+import Voter from './Voter';
 import moment from "moment";
 const Comment = props => {
   return (
@@ -20,6 +21,7 @@ const Comment = props => {
           on {moment(props.timestamp).format("LL")}
         </Text>
       </Text>
+      <Voter value={props.voteScore} onVote={ props.onVote } type="comment" objectid={props.id}/>
     </View>
   );
 };

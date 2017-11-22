@@ -1,53 +1,100 @@
 import React, { Component } from "react";
-import { View, Button,Text, Modal } from "react-native";
+import { View, Button, Text } from "react-native";
 import { connect } from "react-redux";
 
-import Category from "./Category";
+import CategoryList from "./CategoryList";
 import Post from "./Post";
+import NewPost from "./NewPost";
+import NewComment from "./NewComment";
 
 import * as BlogAPI from "../server/dbApi";
 
 class App extends Component {
+  state = {
+    category: "",
+    postToEdit: null,
+    commentToEdit: null,
+    isModalOpen: false
+  };
 
-  state={category:'', 
-        isModalOpen: false}
-  
   componentDidMount() {
-      this.props.getCategories()
-      this.props.getPosts(null)
+    this.props.getCategories();
+    this.props.getPosts(null);
   }
 
-  onCategorySelect(category){
-    this.setState({category:category}, () => this.props.getPosts(category))
+  onCategorySelect(category) {
+    this.setState({ category: category }, () => this.props.getPosts(category));
   }
 
-  onAddPost(){
-    debugger
-    this.setState({isModalOpen: !this.state.isModalOpen})
+  toggleModal() {
+    this.setState(
+      { isModalOpen: !this.state.isModalOpen },
+      () =>
+        !this.state.isModalOpen &&
+        this.setState({ postToEdit: null, commentToEdit: null })
+    );
   }
 
+  onCommentEdit(postid, comment) {
+    this.setState({ postToEdit: post, commentToEdit: comment }, () =>
+      this.toggleModal()
+    );
+  }
 
+  onPostEdit(post) {
+    this.setState({ postToEdit: post }, () => this.toggleModal());
+  }
 
   render() {
     return (
-      <View style={{ backgroundColor: "lightGray" }}>
+      <View style={{ backgroundColor: "lightGray", position: "absolute",
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0, }}>
         <View style={{ flex: 1, flexDirection: "row", margin: 10 }}>
-          <Button title="New post" onPress={() => this.onAddPost()} />
-          {this.props.categories.map(cat => 
-             <Category key={cat.path} title={cat.name} selected={this.state.category === cat.path} 
-             onCategorySelect={() => this.onCategorySelect(this.state.category === cat.path ? '' : cat.path)}/>
-           )}
-           
+          <Button title="New post" onPress={() => this.toggleModal()} />
+          <CategoryList
+            categories={this.props.categories}
+            value={this.state.category}
+            onCategorySelect={cat => this.onCategorySelect(cat)}
+          />
         </View>
         <View>
-          {this.props.posts.map(post => <Post key={post.id} {...post} />)}
+          {this.props.posts.map(post => <Post key={post.id} {...post} onAddComment={(post, comment) => this.onCommentEdit(post, comment)}/>)}
         </View>
 
-        <Modal
-          transparent={false}
-          visible={this.state.isModalOpen}
-          onRequestClose={() => {alert("Modal has been closed.")}}
-          ><Text>STACEPPA!</Text></Modal>
+        <View
+          style={{
+            backgroundColor: "rgba(0,0,0,.50)",
+            borderColor: "transparent",
+            position: "absolute",
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            display: this.state.isModalOpen ? "flex" : "none"
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "rgb(255,255,255)",
+              borderColor: "transparent",
+              position: "absolute",
+              left: 100,
+              top: 100,
+              right: 100,
+              bottom: 100
+            }}
+          >
+            { this.state.commentToEdit === undefined && 
+              <NewPost  categories={this.props.categories} onClose={() => this.toggleModal() } onAddPost={(post) => this.props.addPost(post)} />
+            }
+            {
+              this.state.commentToEdit && <NewComment parentPostId={this.state.postToEdit} onClose={() => this.toggleModal()} onAddComment={(comment) => this.props.addComment(comment)}  />
+            }
+          </View>
+        </View>
       </View>
     );
   }
@@ -61,8 +108,10 @@ const mapStateToProps = ({ categories, posts }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getPosts: (category) => dispatch(BlogAPI.doGetPosts(category)),
-    getCategories: () => dispatch(BlogAPI.doGetCategories())
+    getPosts: category => dispatch(BlogAPI.doGetPosts(category)),
+    getCategories: () => dispatch(BlogAPI.doGetCategories()),
+    addPost: post => dispatch(BlogAPI.doAddPost(post)),
+    addComment: comment => dispatch(BlogAPI.doAddComment(comment))
   };
 };
 

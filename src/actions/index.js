@@ -1,6 +1,7 @@
 
 export const actionTypes = {
   POST: "POST", 
+  COMMENT: "COMMENT", 
   POSTLIST: "POSTLIST", 
   CATEGORYLIST: "CATEGORYLIST",
   COMMENTS: "COMMENTS"
@@ -34,5 +35,11 @@ export const getComments = (postid, comments) => {
     return {
       type: actionTypes.POST,
       post: post
+    }
+  }
+  export const getComment = (comment) => {
+    return {
+      type: actionTypes.COMMENT,
+      comment: comment
     }
   }
