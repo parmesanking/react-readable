@@ -5,11 +5,12 @@ const initialState={
 }
 
 const post =  (state = initialState, action) => {
+    let posts = []
     switch (action.type) {
       case actionTypes.POSTLIST :
         return {
           ...state,
-          posts: action.posts ? action.posts : []
+          posts: action.posts ? action.posts.sort((a,b) => a.timestamp < b.timestamp) : []
         }
       case actionTypes.CATEGORYLIST :
         return {
@@ -17,7 +18,7 @@ const post =  (state = initialState, action) => {
           categories: action.categories ? action.categories : []
         }
       case actionTypes.COMMENTS :
-        let posts = state.posts.map(p => {
+        posts = state.posts.map(p => {
           if (p.id === action.postid){
             p.comments = action.comments ? action.comments.sort((a,b) => a.timestamp < b.timestamp) : []
           }
@@ -26,11 +27,25 @@ const post =  (state = initialState, action) => {
         )
         return {
           ...state,
-          posts: posts
-        }    
+          posts: posts.sort((a,b) => a.timestamp < b.timestamp)
+        }  
+      case actionTypes.POST :   //Adding or updating the post
+      posts = state.posts.slice(0)
+      let postIx = posts.findIndex(p => p.id === action.post.id)
+      if (postIx >= 0){
+        posts[postIx].voteScore = action.post.voteScore
+      }else{
+        posts.push(action.post)
+      }
+      return {
+        ...state,
+        posts: posts.sort((a,b) => a.timestamp < b.timestamp)
+      }
       default :
         return state  
     }
   }
+
+ 
 
 export default post

@@ -1,6 +1,6 @@
 
 export const actionTypes = {
-  NEWPOST: "NEWPOST", 
+  POST: "POST", 
   POSTLIST: "POSTLIST", 
   CATEGORYLIST: "CATEGORYLIST",
   COMMENTS: "COMMENTS"
@@ -30,3 +30,9 @@ export const getComments = (postid, comments) => {
     }
   }
 
+  export const getPost = (post) => {
+    return {
+      type: actionTypes.POST,
+      post: post
+    }
+  }

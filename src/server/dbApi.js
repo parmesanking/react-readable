@@ -30,10 +30,7 @@ export const doGetComments = postid => dispatch =>
     .then(comments => dispatch(acts.getComments(postid, comments)));
 
 export const doVotePost = (postid, vote) => dispatch =>
-{
-debugger
-
- fetch(`${api}/posts/${postid}`, {
+  fetch(`${api}/posts/${postid}`, {
     method: 'POST',
     headers: {
       ...headers,
@@ -42,9 +39,4 @@ debugger
     body: JSON.stringify({"option": vote > 0 ? 'upVote' : 'downVote' })
   })
     .then(res => res.json())
-    .then(post => {
-      debugger
-      console.log(post)
-    })
-    
-  };
+    .then(post => dispatch(acts.getPost(post)));

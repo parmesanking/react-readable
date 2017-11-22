@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Button, Text } from "react-native";
-import * as BlogAPI from "../server/dbApi";
+
 
 
 
@@ -10,8 +10,7 @@ const Voter = props => {
       style={{
         marginLeft: 10,
         flex: 1,
-        flexDirection: "row",
-        "marginLeft": "auto"
+        flexDirection: "row"
       }}
     >
       <Button title="-" onPress={() => props.onVote(-1)}/>
