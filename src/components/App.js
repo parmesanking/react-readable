@@ -58,59 +58,82 @@ class App extends Component {
   }
 
   onMessageDelete(type, message) {
-    return (type === "post"
+    return type === "post"
       ? window.confirm("Do you wanna remove that post with all child comments?")
         ? this.props.deletePost(message)
         : null
       : window.confirm("Do you wanna remove that comment?")
         ? this.props.deleteComment(message)
-        : null);
+        : null;
   }
 
   render() {
     return (
       <View
         style={{
-          backgroundColor: "#E8E8E8"
+          backgroundColor: "#E8E8E8",
+          borderColor: "transparent",
+          position: "absolute",
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0
         }}
       >
-        <View style={{ flex: 1, flexDirection: "row", margin: 10 }}>
-          <Button style={{marginRight:50}} title="New post" onPress={() => this.onPostEdit()} />
-          <View style={{marginRight:50}} />
-          <CategoryList
-            categories={this.props.categories}
-            value={this.state.category}
-            onCategorySelect={cat => this.onCategorySelect(cat)}
-          />
+        <View
+          style={{
+            marginLeft: 100,
+            marginRight: 100
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              flexDirection: "row",
+              margin: 10
+            }}
+          >
+            <Button
+              style={{ marginRight: 50 }}
+              title="New post"
+              onPress={() => this.onPostEdit()}
+            />
+            <View style={{ marginRight: 50 }} />
+            <CategoryList
+              categories={this.props.categories}
+              value={this.state.category}
+              onCategorySelect={cat => this.onCategorySelect(cat)}
+            />
+          </View>
+          <View>
+            {this.props.posts.length > 0 ? (
+              this.props.posts.map(post => (
+                <Post
+                  key={post.id}
+                  post={post}
+                  onAddPost={post => this.onPostEdit(post)}
+                  onAddComment={(post, comment) =>
+                    this.onCommentEdit(post, comment)}
+                  onDelete={(type, msg) => this.onMessageDelete(type, msg)}
+                />
+              ))
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  No posts found :(
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
-        <View>
-          {this.props.posts.length > 0 ? (
-            this.props.posts.map(post => (
-              <Post
-                key={post.id}
-                post={post}
-                onAddPost={post => this.onPostEdit(post)}
-                onAddComment={(post, comment) =>
-                  this.onCommentEdit(post, comment)}
-                onDelete={(type, msg) => this.onMessageDelete(type, msg)}
-              />
-            ))
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                No posts found :(
-              </Text>
-            </View>
-          )}
-        </View>
-
         <View
           style={{
             backgroundColor: "rgba(0,0,0,.50)",
@@ -131,7 +154,7 @@ class App extends Component {
               left: 100,
               top: 100,
               right: 100,
-              bottom: 100
+              height: "50%"
             }}
           >
             {this.state.modalType === "post" ? (
