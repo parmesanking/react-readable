@@ -1,8 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import { View, Button, Text, TextInput } from "react-native";
-import CategoryList from "./CategoryList";
+
 import uuid from "uuid/v4";
-import { Margin } from "./Utils";
 
 class NewComment extends React.Component {
   state = this.getInitialState();
@@ -107,7 +106,7 @@ class NewComment extends React.Component {
             color="#d3d3d3"
             onPress={() => this.props.onClose()}
           />
-          <Margin style={{ marginRight: 10 }} />
+          <View style={{marginRight:10}} />
           <Button title="Save" onPress={() => this.onCommentSave()} />
         </View>
       </View>

@@ -11,7 +11,7 @@ const post = (state = initialState, action) => {
       return {
         ...state,
         posts: action.posts
-          ? action.posts.sort((a, b) => a.timestamp < b.timestamp)
+          ? action.posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
           : []
       };
     case actionTypes.CATEGORYLIST:
@@ -23,14 +23,14 @@ const post = (state = initialState, action) => {
       posts = state.posts.map(p => {
         if (p.id === action.postid) {
           p.comments = action.comments
-            ? action.comments.sort((a, b) => a.timestamp < b.timestamp)
+            ? action.comments.filter(c => !c.deleted && !c.parentDeleted).sort((a, b) => a.timestamp < b.timestamp)
             : [];
         }
         return p;
       });
       return {
         ...state,
-        posts: posts.sort((a, b) => a.timestamp < b.timestamp)
+        posts: posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
       };
     case actionTypes.POST: //Adding or updating the post
       posts = state.posts.slice(0);
@@ -40,13 +40,14 @@ const post = (state = initialState, action) => {
         posts[postIx].title = action.post.title;
         posts[postIx].body = action.post.body;
         posts[postIx].voteScore = action.post.voteScore;
+        posts[postIx].deleted = action.post.deleted;
         posts[postIx].timestamp = action.post.timestamp;
       } else {
         posts.push(action.post);
       }
       return {
         ...state,
-        posts: posts.sort((a, b) => a.timestamp < b.timestamp)
+        posts: posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
       };
     case actionTypes.COMMENT: //Adding or updating the comment
       posts = state.posts.slice(0);
@@ -58,12 +59,14 @@ const post = (state = initialState, action) => {
           comments[commentIx].author = action.comment.author;
           comments[commentIx].body = action.comment.body;
           comments[commentIx].voteScore = action.comment.voteScore;
+          comments[commentIx].deleted = action.comment.deleted;
+          comments[commentIx].parentDeleted = action.comment.parentDeleted;
           comments[commentIx].timestamp = action.comment.timestamp;
         } else {
           comments.push(action.comment);
         }
         
-        posts[postIx].comments = comments.sort(
+        posts[postIx].comments = comments.filter(c => !c.deleted && !c.parentDeleted).sort(
           (a, b) => a.timestamp < b.timestamp
         );
         posts[postIx].commentCount = posts[postIx].comments.length
@@ -73,7 +76,7 @@ const post = (state = initialState, action) => {
 
       return {
         ...state,
-        posts: posts
+        posts: posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
       };
     default:
       return state;

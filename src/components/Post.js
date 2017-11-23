@@ -1,15 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text  } from "react-native";
 import moment from "moment";
 import * as BlogAPI from "../server/dbApi";
 import Comment from "./Comment";
 import Voter from "./Voter";
 import { Margin } from "./Utils";
-import TrashIcon from "../static/trash.png";
-import CommentIcon from "../static/comment.jpg";
-import EditIcon from "../static/edit.png";
 
+import { AddCommentButton,CommentsButton, EditButton, TrashButton } from "./Utils";
 class Post extends React.Component {
   state = { showComment: false };
 
@@ -59,7 +57,8 @@ class Post extends React.Component {
           {this.props.post.body}
         </Text>
         <Margin />
-        {this.state.showComment && this.props.post.comments &&
+        {this.state.showComment &&
+          this.props.post.comments &&
           this.props.post.comments.map(comment => (
             <Comment
               key={comment.id}
@@ -68,6 +67,7 @@ class Post extends React.Component {
               onAddComment={this.props.onAddComment}
               onVote={(type, contentId, value) =>
                 this.onVote(type, contentId, value)}
+              onDelete={this.props.onDelete}
             />
           ))}
         <View
@@ -94,69 +94,15 @@ class Post extends React.Component {
             }}
           >
             {/* Edit post*/}
-            <TouchableOpacity
-              style={{ marginRight: 10 }}
-              onPress={() => this.props.onAddPost(this.props.post)}
-            >
-              <Image
-                style={{
-                  width: 30,
-                  height: 30,
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-                source={EditIcon}
-              />
-            </TouchableOpacity>
+            <EditButton onPress={() => this.props.onAddPost(this.props.post)} />
             {/* Add a comment*/}
-            <TouchableOpacity
-              style={{ marginRight: 10 }}
-              onPress={() => this.props.onAddComment(this.props.post, null)}
-            >
-              <Image
-                style={{
-                  width: 30,
-                  height: 30,
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-                source={CommentIcon}
-              >
-                <Text
-                  style={{ paddingBottom: 6, fontWeight: "bold" }}
-                  color="#d6d6d6"
-                >
-                  +
-                </Text>
-              </Image>
-            </TouchableOpacity>
+            <AddCommentButton onPress={() => this.props.onAddComment(this.props.post, null)} />
             {/* Expand/Collapse comments*/}
             {this.props.post.commentCount > 0 && (
-              <TouchableOpacity
-                style={{ marginRight: 10 }}
-                onPress={() => this.setState({showComment: !this.state.showComment})}
-              >
-                <Image
-                  style={{
-                    width: 30,
-                    height: 30,
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                  source={CommentIcon}
-                >
-                  <Text style={{ paddingBottom: 6 }} color="#d6d6d6">
-                    {this.props.post.commentCount}
-                  </Text>
-                </Image>
-              </TouchableOpacity>
+             <CommentsButton onPress={() => this.setState({ showComment: !this.state.showComment })} value={this.props.post.commentCount} />
             )}
-            <TouchableOpacity
-              style={{ marginRight: 0 }}
-              onPress={() => console.log("pino")}
-            >
-              <Image style={{ width: 30, height: 30 }} source={TrashIcon} />
-            </TouchableOpacity>
+            {/* DeletePost*/}
+            <TrashButton onPress={() => this.props.onDelete('post', this.props.post)}/>
           </View>
         </View>
       </View>
