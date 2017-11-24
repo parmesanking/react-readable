@@ -1,5 +1,6 @@
 
 export const actionTypes = {
+  POSTDETAIL: "POSTDETAIL", 
   POST: "POST", 
   COMMENT: "COMMENT", 
   POSTLIST: "POSTLIST", 
@@ -46,9 +47,15 @@ export const getComments = (postid, comments) => {
   }
 
   export const sortPost = (sortby, sortorder) => {
-    debugger
     return {
       type: actionTypes.SORT,
       sort: {by: sortby, order: sortorder}
+    }
+  }
+
+  export const showPost = (post) => {
+    return {
+      type: actionTypes.POSTDETAIL,
+      post: post
     }
   }

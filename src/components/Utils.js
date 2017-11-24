@@ -3,11 +3,19 @@ import { View, TouchableOpacity, Image, Text } from "react-native";
 import EditIcon from "../static/edit.png";
 import TrashIcon from "../static/trash.png";
 import CommentIcon from "../static/comment.jpg";
+import HomeIcon from "../static/home.png";
 
 export const Margin = () => {
   return <View style={{ height: 20, backgroundColor: "transparent" }} />;
 };
 
+export const HomeButton = props => {
+  return (
+    <TouchableOpacity style={{ marginRight: 0 }} onPress={props.onPress}>
+      <Image style={{ width: 30, height: 30 }} source={HomeIcon} />
+    </TouchableOpacity>
+  );
+};
 export const TrashButton = props => {
   return (
     <TouchableOpacity style={{ marginRight: 0 }} onPress={props.onPress}>

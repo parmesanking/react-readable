@@ -1,19 +1,35 @@
 import React from "react";
 import { connect } from "react-redux";
-import { View, Text  } from "react-native";
+import { Link } from "react-router-dom";
+import { View, Text } from "react-native";
 import moment from "moment";
 import * as BlogAPI from "../server/dbApi";
 import Comment from "./Comment";
 import Voter from "./Voter";
 import { Margin } from "./Utils";
 
-import { AddCommentButton,CommentsButton, EditButton, TrashButton } from "./Utils";
+import {
+  AddCommentButton,
+  CommentsButton,
+  EditButton,
+  TrashButton
+} from "./Utils";
 class Post extends React.Component {
   state = { showComment: false };
 
-  componentDidMount() {
-    this.props.getComments(this.props.post.id);
+
+  /*
+  componentDidMount(){
+   this.props.getComments(this.props.post.id);
   }
+
+  componentWillReceiveProps(nextProps){
+    debugger
+    if (this.props.post.id !== nextProps.post.id ){
+      this.props.getComments(nextProps.post.id);
+    }
+  
+  }*/
 
   onVote(type, contentId, value) {
     type === "post"
@@ -45,17 +61,25 @@ class Post extends React.Component {
         >
           <View>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              {this.props.post.title}
+              {this.props.compactView ? (
+                <Link to={`/${this.props.post.category}/${this.props.post.id}`}>
+                  {this.props.post.title}
+                </Link>
+              ) : (
+                this.props.post.title
+              )}
             </Text>
+
             <Text style={{ marginTop: 5, fontSize: 12, color: "gray" }}>
-              by {this.props.post.author}
+              by {this.props.post.author} - tagged as [{this.props.post.category}]
             </Text>
           </View>
         </View>
-
-        <Text style={{ fontSize: 14, paddingTop: 10 }}>
-          {this.props.post.body}
-        </Text>
+        {!this.props.compactView && (
+          <Text style={{ fontSize: 14, paddingTop: 10 }}>
+            {this.props.post.body}
+          </Text>
+        )}
         <Margin />
         {this.state.showComment &&
           this.props.post.comments &&
@@ -96,13 +120,21 @@ class Post extends React.Component {
             {/* Edit post*/}
             <EditButton onPress={() => this.props.onAddPost(this.props.post)} />
             {/* Add a comment*/}
-            <AddCommentButton onPress={() => this.props.onAddComment(this.props.post, null)} />
+            <AddCommentButton
+              onPress={() => this.props.onAddComment(this.props.post, null)}
+            />
             {/* Expand/Collapse comments*/}
             {this.props.post.commentCount > 0 && (
-             <CommentsButton onPress={() => this.setState({ showComment: !this.state.showComment })} value={this.props.post.commentCount} />
+              <CommentsButton
+                onPress={() =>
+                  this.setState({ showComment: !this.state.showComment })}
+                value={this.props.post.commentCount}
+              />
             )}
             {/* DeletePost*/}
-            <TrashButton onPress={() => this.props.onDelete('post', this.props.post)}/>
+            <TrashButton
+              onPress={() => this.props.onDelete("post", this.props.post)}
+            />
           </View>
         </View>
       </View>

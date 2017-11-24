@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { View, Button, Text } from "react-native";
 import { connect } from "react-redux";
 
@@ -6,9 +7,10 @@ import CategoryList from "./CategoryList";
 import Post from "./Post";
 import NewPost from "./NewPost";
 import NewComment from "./NewComment";
-import {SortButton} from './Utils'
+import { SortButton, HomeButton } from "./Utils";
 import * as BlogAPI from "../server/dbApi";
-import { sortPost } from '../actions/index'
+import { sortPost } from "../actions/index";
+
 
 class App extends Component {
   state = {
@@ -20,8 +22,14 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.props.getCategories();
-    this.props.getPosts(null);
+    this.props.getCategories()
+    this.props.getPosts(this.props.match.params.category, this.props.match.params.postid);
+  }
+
+  componentWillReceiveProps(nextProps){
+    if (this.props.match.params.category !== nextProps.match.params.category || this.props.match.params.postid !== nextProps.match.params.postid){
+      this.props.getPosts(nextProps.match.params.category, nextProps.match.params.postid);
+    }
   }
 
   onCategorySelect(category) {
@@ -68,8 +76,8 @@ class App extends Component {
         : null;
   }
 
-  onSort(column, direction){
-    this.props.sortPost(column, direction)
+  onSort(column, direction) {
+    this.props.sortPost(column, direction);
   }
 
   render() {
@@ -91,6 +99,9 @@ class App extends Component {
             marginRight: 100
           }}
         >
+          {this.props.match.params.postid  ?
+            <Link to="/"><View style={{marginLeft: 10}}><HomeButton /></View></Link>
+            :
           <View
             style={{
               flex: 1,
@@ -110,17 +121,31 @@ class App extends Component {
               value={this.state.category}
               onCategorySelect={cat => this.onCategorySelect(cat)}
             />
-          <Text>Sort by:{"   "}</Text>
-            <SortButton column="score" direction={this.props.sortBy === 'score' ? this.props.sortDirection : ''} onPress={(col, dir) => this.onSort(col, dir)}/>
+            <Text>Sort by:{"   "}</Text>
+            <SortButton
+              column="score"
+              direction={
+                this.props.sortBy === "score" ? this.props.sortDirection : ""
+              }
+              onPress={(col, dir) => this.onSort(col, dir)}
+            />
             <View style={{ marginRight: 10 }} />
-            <SortButton column="date" direction={this.props.sortBy === 'date' ? this.props.sortDirection : ''} onPress={(col, dir) => this.onSort(col, dir)} />
+            <SortButton
+              column="date"
+              direction={
+                this.props.sortBy === "date" ? this.props.sortDirection : ""
+              }
+              onPress={(col, dir) => this.onSort(col, dir)}
+            />
           </View>
+            }
           <View>
             {this.props.posts.length > 0 ? (
               this.props.posts.map(post => (
                 <Post
                   key={post.id}
                   post={post}
+                  compactView={this.props.match.params.postid ? false : true}
                   onAddPost={post => this.onPostEdit(post)}
                   onAddComment={(post, comment) =>
                     this.onCommentEdit(post, comment)}
@@ -133,7 +158,8 @@ class App extends Component {
                   flex: 1,
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "center"
+                  alignItems: "center", 
+                  marginTop: 20
                 }}
               >
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>
@@ -195,23 +221,23 @@ const mapStateToProps = ({ categories, posts, sort }) => {
   debugger
   return {
     categories: categories ? categories : [],
-    posts: posts ? posts : [], 
-    sortBy: sort.by, 
+    posts: posts ? posts : [],
+    sortBy: sort.by,
     sortDirection: sort.order
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getPosts: category => dispatch(BlogAPI.doGetPosts(category)),
+    getPosts: (category, postid) => dispatch(BlogAPI.doGetPosts(category, postid)),
     getCategories: () => dispatch(BlogAPI.doGetCategories()),
     addPost: post => dispatch(BlogAPI.doAddPost(post)),
     editPost: post => dispatch(BlogAPI.doEditPost(post)),
     deletePost: post => dispatch(BlogAPI.doDeletePost(post)),
     addComment: comment => dispatch(BlogAPI.doAddComment(comment)),
     editComment: comment => dispatch(BlogAPI.doEditComment(comment)),
-    deleteComment: comment => dispatch(BlogAPI.doDeleteComment(comment)), 
-    sortPost: (sortby, sortorder) => dispatch(sortPost(sortby, sortorder)), 
+    deleteComment: comment => dispatch(BlogAPI.doDeleteComment(comment)),
+    sortPost: (sortby, sortorder) => dispatch(sortPost(sortby, sortorder))
   };
 };
 

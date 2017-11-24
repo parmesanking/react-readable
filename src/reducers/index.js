@@ -1,4 +1,4 @@
-import { actionTypes } from "../actions/";
+import { actionTypes, getComments } from "../actions/";
 
 const reduxSorter = (a, b, by, order) => {
 
@@ -23,7 +23,6 @@ const initialState = {
 };
 
 const post = (state = initialState, action) => {
-  debugger;
   let posts = [];
   switch (action.type) {
     case actionTypes.SORT:
@@ -34,6 +33,7 @@ const post = (state = initialState, action) => {
         sort: {...action.sort}
       };
     case actionTypes.POSTLIST:
+    debugger
       let p = action.posts
         ? action.posts
             .filter(p => !p.deleted)
@@ -66,6 +66,7 @@ const post = (state = initialState, action) => {
           .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
       };
     case actionTypes.POST: //Adding or updating the post
+      
       posts = state.posts.slice(0);
       let postIx = posts.findIndex(p => p.id === action.post.id);
       if (postIx >= 0) {
@@ -115,6 +116,7 @@ const post = (state = initialState, action) => {
           .filter(p => !p.deleted)
           .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
       };
+      
     default:
       return state;
   }
