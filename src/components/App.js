@@ -218,7 +218,6 @@ class App extends Component {
   }
 }
 const mapStateToProps = ({ categories, posts, sort }) => {
-  debugger
   return {
     categories: categories ? categories : [],
     posts: posts ? posts : [],

@@ -18,19 +18,6 @@ class Post extends React.Component {
   state = { showComment: false };
 
 
-  /*
-  componentDidMount(){
-   this.props.getComments(this.props.post.id);
-  }
-
-  componentWillReceiveProps(nextProps){
-    debugger
-    if (this.props.post.id !== nextProps.post.id ){
-      this.props.getComments(nextProps.post.id);
-    }
-  
-  }*/
-
   onVote(type, contentId, value) {
     type === "post"
       ? this.props.doVotePost(contentId, value)

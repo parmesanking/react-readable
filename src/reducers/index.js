@@ -1,4 +1,4 @@
-import { actionTypes, getComments } from "../actions/";
+import { actionTypes } from "../actions/";
 
 const reduxSorter = (a, b, by, order) => {
 
@@ -33,7 +33,6 @@ const post = (state = initialState, action) => {
         sort: {...action.sort}
       };
     case actionTypes.POSTLIST:
-    debugger
       let p = action.posts
         ? action.posts
             .filter(p => !p.deleted)

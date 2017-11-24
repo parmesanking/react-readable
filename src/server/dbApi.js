@@ -1,6 +1,6 @@
 import * as acts from "../actions";
 
-const api = "http://localhost:3001";
+const api = process.env.SERVERURL || "http://localhost:3001";
 
 //Unique toke generation
 let token = localStorage.token;
@@ -24,24 +24,22 @@ export const doGetPosts = (category, postid) => dispatch =>
   postid
     ? fetch(`${api}/posts/${postid}`, { headers })
         .then(res => res.json())
-        .then(post => { 
-          dispatch(acts.getPosts([post]))
-          dispatch(doGetComments(post.id))
+        .then(post => {
+          dispatch(acts.getPosts([post]));
+          dispatch(doGetComments(post.id));
         })
     : fetch(category ? `${api}/${category}/posts` : `${api}/posts`, { headers })
         .then(res => res.json())
         .then(posts => {
-          dispatch(acts.getPosts(posts))
-          posts.map(p => dispatch(doGetComments(p.id)))
+          dispatch(acts.getPosts(posts));
+          posts.map(p => dispatch(doGetComments(p.id)));
         });
 
 export const doGetComments = postid => dispatch =>
-{
-  debugger
   fetch(`${api}/posts/${postid}/comments`, { headers })
     .then(res => res.json())
     .then(comments => dispatch(acts.getComments(postid, comments)));
-}
+
 export const doVotePost = (postid, vote) => dispatch =>
   fetch(`${api}/posts/${postid}`, {
     method: "POST",
