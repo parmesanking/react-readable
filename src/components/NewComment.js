@@ -16,14 +16,14 @@ class NewComment extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.comment) {
-      this.setState({
-        id: nextProps.comment.id,
-        author: nextProps.comment.author,
-        body: nextProps.comment.body,
-        parentId: nextProps.comment.parentId
-      });
-    }
+    nextProps.comment
+      ? this.setState({
+          id: nextProps.comment.id,
+          author: nextProps.comment.author,
+          body: nextProps.comment.body,
+          parentId: nextProps.comment.parentId
+        })
+      : this.setState(this.getInitialState());
   }
 
   onCategorySelect(category) {
@@ -41,7 +41,10 @@ class NewComment extends React.Component {
       alert("Please set your name as author");
     } else if (!this.state.body) {
       alert("Please set a comment");
-    } else if ((!this.props.editMode && !this.props.post) || (this.props.editMode && !this.props.comment.parentId)) {
+    } else if (
+      (!this.props.editMode && !this.props.post) ||
+      (this.props.editMode && !this.props.comment.parentId)
+    ) {
       alert("Invalid post passed!");
     } else {
       this.props.editMode
@@ -106,7 +109,7 @@ class NewComment extends React.Component {
             color="#d3d3d3"
             onPress={() => this.props.onClose()}
           />
-          <View style={{marginRight:10}} />
+          <View style={{ marginRight: 10 }} />
           <Button title="Save" onPress={() => this.onCommentSave()} />
         </View>
       </View>

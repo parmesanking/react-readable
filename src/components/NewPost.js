@@ -18,15 +18,15 @@ class NewPost extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.post) {
-      this.setState({
-        id: nextProps.post.id,
-        author: nextProps.post.author,
-        title: nextProps.post.title,
-        body: nextProps.post.body,
-        category: nextProps.post.category
-      });
-    }
+    nextProps.post
+      ? this.setState({
+          id: nextProps.post.id,
+          author: nextProps.post.author,
+          title: nextProps.post.title,
+          body: nextProps.post.body,
+          category: nextProps.post.category
+        })
+      : this.setState(this.getInitialState());
   }
 
   onCategorySelect(category) {
@@ -101,7 +101,8 @@ class NewPost extends React.Component {
         <CategoryList
           categories={this.props.categories}
           value={this.state.category}
-          onCategorySelect={cat => this.props.editMode ? '' : this.onCategorySelect(cat)}
+          onCategorySelect={cat =>
+            this.props.editMode ? "" : this.onCategorySelect(cat)}
         />
         <Margin />
         <View
@@ -116,7 +117,7 @@ class NewPost extends React.Component {
             color="#d3d3d3"
             onPress={() => this.props.onClose()}
           />
-          <View style={{marginRight:10}} />
+          <View style={{ marginRight: 10 }} />
           <Button title="Save" onPress={() => this.onPostSave()} />
         </View>
       </View>

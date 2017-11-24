@@ -8,12 +8,9 @@ export const Margin = () => {
   return <View style={{ height: 20, backgroundColor: "transparent" }} />;
 };
 
-export const TrashButton = (props) => {
+export const TrashButton = props => {
   return (
-    <TouchableOpacity
-      style={{ marginRight: 0 }}
-      onPress={props.onPress}
-    >
+    <TouchableOpacity style={{ marginRight: 0 }} onPress={props.onPress}>
       <Image style={{ width: 30, height: 30 }} source={TrashIcon} />
     </TouchableOpacity>
   );
@@ -57,24 +54,33 @@ export const CommentsButton = props => {
 
 export const AddCommentButton = props => {
   return (
-    <TouchableOpacity
-    style={{ marginRight: 10 }}
-    onPress={props.onPress}
-  >
-    <Image
-      style={{
-        width: 30,
-        height: 30,
-        alignItems: "center",
-        justifyContent: "center"
-      }}
-      source={CommentIcon}
-    >
-      <Text
-        style={{ paddingBottom: 6, fontWeight: "bold" }}
-        color="#d6d6d6"
-      >+</Text>
-    </Image>
-  </TouchableOpacity>
+    <TouchableOpacity style={{ marginRight: 10 }} onPress={props.onPress}>
+      <Image
+        style={{
+          width: 30,
+          height: 30,
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+        source={CommentIcon}
+      >
+        <Text style={{ paddingBottom: 6, fontWeight: "bold" }} color="#d6d6d6">
+          +
+        </Text>
+      </Image>
+    </TouchableOpacity>
+  );
+};
+
+export const SortButton = props => {
+  return (
+    <TouchableOpacity style={{ marginRight: 10 }} onPress={() => props.onPress(props.column, props.direction === "desc" ? 'asc': 'desc')}>
+    <Text>
+      <Text style={{fontWeight: props.direction !== '' ? 'bold' : '' }}>{props.column} </Text>
+      <Text>
+        {props.direction !== "" ? (props.direction === "asc" ? "▲" : "▼") : ""}
+      </Text>
+      </Text>
+    </TouchableOpacity>
   );
 };

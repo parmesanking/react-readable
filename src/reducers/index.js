@@ -1,18 +1,47 @@
 import { actionTypes } from "../actions/";
+
+const reduxSorter = (a, b, by, order) => {
+
+   switch (by) {
+    case "score":
+      return order === "asc"
+        ? ( a.voteScore > b.voteScore)
+        : ( a.voteScore < b.voteScore);
+    case "date":
+      return order === "asc"
+        ? ( a.timestamp > b.timestamp)
+        : ( a.timestamp < b.timestamp);
+    default:
+      return true;
+  }
+};
+
 const initialState = {
   categories: [],
-  posts: []
+  posts: [],
+  sort: { by: "score", order: "desc" }
 };
 
 const post = (state = initialState, action) => {
+  debugger;
   let posts = [];
   switch (action.type) {
-    case actionTypes.POSTLIST:
+    case actionTypes.SORT:
+      posts = state.posts.slice(0).filter(p => !p.deleted).sort((a, b) => reduxSorter(a, b, action.sort.by, action.sort.order))
       return {
         ...state,
-        posts: action.posts
-          ? action.posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
-          : []
+        posts: posts,
+        sort: {...action.sort}
+      };
+    case actionTypes.POSTLIST:
+      let p = action.posts
+        ? action.posts
+            .filter(p => !p.deleted)
+            .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
+        : [];
+      return {
+        ...state,
+        posts: p
       };
     case actionTypes.CATEGORYLIST:
       return {
@@ -23,14 +52,18 @@ const post = (state = initialState, action) => {
       posts = state.posts.map(p => {
         if (p.id === action.postid) {
           p.comments = action.comments
-            ? action.comments.filter(c => !c.deleted && !c.parentDeleted).sort((a, b) => a.timestamp < b.timestamp)
+            ? action.comments
+                .filter(c => !c.deleted && !c.parentDeleted)
+                .sort((a, b) => a.voteScore < b.voteScore)
             : [];
         }
         return p;
       });
       return {
         ...state,
-        posts: posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
+        posts: posts
+          .filter(p => !p.deleted)
+          .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
       };
     case actionTypes.POST: //Adding or updating the post
       posts = state.posts.slice(0);
@@ -47,7 +80,9 @@ const post = (state = initialState, action) => {
       }
       return {
         ...state,
-        posts: posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
+        posts: posts
+          .filter(p => !p.deleted)
+          .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
       };
     case actionTypes.COMMENT: //Adding or updating the comment
       posts = state.posts.slice(0);
@@ -65,18 +100,20 @@ const post = (state = initialState, action) => {
         } else {
           comments.push(action.comment);
         }
-        
-        posts[postIx].comments = comments.filter(c => !c.deleted && !c.parentDeleted).sort(
-          (a, b) => a.timestamp < b.timestamp
-        );
-        posts[postIx].commentCount = posts[postIx].comments.length
+
+        posts[postIx].comments = comments
+          .filter(c => !c.deleted && !c.parentDeleted)
+          .sort((a, b) => a.voteScore < b.voteScore);
+        posts[postIx].commentCount = posts[postIx].comments.length;
       } else {
         console.log("we've got an orphan comment!");
       }
 
       return {
         ...state,
-        posts: posts.filter(p => !p.deleted).sort((a, b) => a.timestamp < b.timestamp)
+        posts: posts
+          .filter(p => !p.deleted)
+          .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
       };
     default:
       return state;

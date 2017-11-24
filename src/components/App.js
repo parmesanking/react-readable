@@ -6,8 +6,9 @@ import CategoryList from "./CategoryList";
 import Post from "./Post";
 import NewPost from "./NewPost";
 import NewComment from "./NewComment";
-
+import {SortButton} from './Utils'
 import * as BlogAPI from "../server/dbApi";
+import { sortPost } from '../actions/index'
 
 class App extends Component {
   state = {
@@ -67,6 +68,10 @@ class App extends Component {
         : null;
   }
 
+  onSort(column, direction){
+    this.props.sortPost(column, direction)
+  }
+
   render() {
     return (
       <View
@@ -105,6 +110,10 @@ class App extends Component {
               value={this.state.category}
               onCategorySelect={cat => this.onCategorySelect(cat)}
             />
+          <Text>Sort by:{"   "}</Text>
+            <SortButton column="score" direction={this.props.sortBy === 'score' ? this.props.sortDirection : ''} onPress={(col, dir) => this.onSort(col, dir)}/>
+            <View style={{ marginRight: 10 }} />
+            <SortButton column="date" direction={this.props.sortBy === 'date' ? this.props.sortDirection : ''} onPress={(col, dir) => this.onSort(col, dir)} />
           </View>
           <View>
             {this.props.posts.length > 0 ? (
@@ -182,10 +191,13 @@ class App extends Component {
     );
   }
 }
-const mapStateToProps = ({ categories, posts }) => {
+const mapStateToProps = ({ categories, posts, sort }) => {
+  debugger
   return {
     categories: categories ? categories : [],
-    posts: posts ? posts : []
+    posts: posts ? posts : [], 
+    sortBy: sort.by, 
+    sortDirection: sort.order
   };
 };
 
@@ -198,7 +210,8 @@ const mapDispatchToProps = dispatch => {
     deletePost: post => dispatch(BlogAPI.doDeletePost(post)),
     addComment: comment => dispatch(BlogAPI.doAddComment(comment)),
     editComment: comment => dispatch(BlogAPI.doEditComment(comment)),
-    deleteComment: comment => dispatch(BlogAPI.doDeleteComment(comment))
+    deleteComment: comment => dispatch(BlogAPI.doDeleteComment(comment)), 
+    sortPost: (sortby, sortorder) => dispatch(sortPost(sortby, sortorder)), 
   };
 };
 

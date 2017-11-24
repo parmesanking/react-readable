@@ -4,7 +4,8 @@ export const actionTypes = {
   COMMENT: "COMMENT", 
   POSTLIST: "POSTLIST", 
   CATEGORYLIST: "CATEGORYLIST",
-  COMMENTS: "COMMENTS"
+  COMMENTS: "COMMENTS", 
+  SORT: "SORT"
 
 }
 
@@ -41,5 +42,13 @@ export const getComments = (postid, comments) => {
     return {
       type: actionTypes.COMMENT,
       comment: comment
+    }
+  }
+
+  export const sortPost = (sortby, sortorder) => {
+    debugger
+    return {
+      type: actionTypes.SORT,
+      sort: {by: sortby, order: sortorder}
     }
   }
