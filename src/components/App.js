@@ -135,22 +135,34 @@ class App extends Component {
                 value={this.state.category}
                 onCategorySelect={cat => this.onCategorySelect(cat)}
               />
-              <Text>Sort by:{"   "}</Text>
-              <SortButton
-                column="score"
-                direction={
-                  this.props.sortBy === "score" ? this.props.sortDirection : ""
-                }
-                onPress={(col, dir) => this.onSort(col, dir)}
-              />
-              <View style={{ marginRight: 10 }} />
-              <SortButton
-                column="date"
-                direction={
-                  this.props.sortBy === "date" ? this.props.sortDirection : ""
-                }
-                onPress={(col, dir) => this.onSort(col, dir)}
-              />
+              {this.props.posts.length > 1 && 
+                <View style={{
+                  flex: 1,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "flex-end"}} >
+                  <Text>Sort by:{"   "}</Text>
+                  <SortButton
+                    column="score"
+                    direction={
+                      this.props.sortBy === "score"
+                        ? this.props.sortDirection
+                        : ""
+                    }
+                    onPress={(col, dir) => this.onSort(col, dir)}
+                  />
+                  <View style={{ marginRight: 10 }} />
+                  <SortButton
+                    column="date"
+                    direction={
+                      this.props.sortBy === "date"
+                        ? this.props.sortDirection
+                        : ""
+                    }
+                    onPress={(col, dir) => this.onSort(col, dir)}
+                  />
+                </View>
+              }
             </View>
           )}
           <View>
