@@ -33,7 +33,7 @@ class App extends Component {
   }
 
   onCategorySelect(category) {
-    this.setState({ category: category }, () => this.props.getPosts(category));
+    this.setState({ category: category }, () => this.props.history.push(`/${category}`));
   }
 
   toggleModal() {
