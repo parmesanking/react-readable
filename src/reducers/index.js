@@ -1,16 +1,15 @@
 import { actionTypes } from "../actions/";
 
 const reduxSorter = (a, b, by, order) => {
-
-   switch (by) {
+  switch (by) {
     case "score":
       return order === "asc"
-        ? ( a.voteScore > b.voteScore)
-        : ( a.voteScore < b.voteScore);
+        ? a.voteScore > b.voteScore
+        : a.voteScore < b.voteScore;
     case "date":
       return order === "asc"
-        ? ( a.timestamp > b.timestamp)
-        : ( a.timestamp < b.timestamp);
+        ? a.timestamp > b.timestamp
+        : a.timestamp < b.timestamp;
     default:
       return true;
   }
@@ -26,21 +25,25 @@ const post = (state = initialState, action) => {
   let posts = [];
   switch (action.type) {
     case actionTypes.SORT:
-      posts = state.posts.slice(0).filter(p => !p.deleted).sort((a, b) => reduxSorter(a, b, action.sort.by, action.sort.order))
+      posts = state.posts
+        .slice(0)
+        .filter(p => !p.deleted)
+        .sort((a, b) => reduxSorter(a, b, action.sort.by, action.sort.order));
       return {
         ...state,
         posts: posts,
-        sort: {...action.sort}
+        sort: { ...action.sort }
       };
     case actionTypes.POSTLIST:
-      let p = action.posts
-        ? action.posts
-            .filter(p => !p.deleted)
-            .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
-        : [];
       return {
         ...state,
-        posts: p
+        posts: action.posts
+          ? action.posts
+              .filter(p => !p.deleted)
+              .sort((a, b) =>
+                reduxSorter(a, b, state.sort.by, state.sort.order)
+              )
+          : []
       };
     case actionTypes.CATEGORYLIST:
       return {
@@ -62,10 +65,9 @@ const post = (state = initialState, action) => {
         ...state,
         posts: posts
           .filter(p => !p.deleted)
-          .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
+          .sort((a, b) => reduxSorter(a, b, state.sort.by, state.sort.order))
       };
     case actionTypes.POST: //Adding or updating the post
-      
       posts = state.posts.slice(0);
       let postIx = posts.findIndex(p => p.id === action.post.id);
       if (postIx >= 0) {
@@ -82,7 +84,7 @@ const post = (state = initialState, action) => {
         ...state,
         posts: posts
           .filter(p => !p.deleted)
-          .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
+          .sort((a, b) => reduxSorter(a, b, state.sort.by, state.sort.order))
       };
     case actionTypes.COMMENT: //Adding or updating the comment
       posts = state.posts.slice(0);
@@ -113,9 +115,9 @@ const post = (state = initialState, action) => {
         ...state,
         posts: posts
           .filter(p => !p.deleted)
-          .sort((a, b) => reduxSorter(a,b,state.sort.by, state.sort.order))
+          .sort((a, b) => reduxSorter(a, b, state.sort.by, state.sort.order))
       };
-      
+
     default:
       return state;
   }

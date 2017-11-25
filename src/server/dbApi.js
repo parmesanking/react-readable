@@ -25,8 +25,8 @@ export const doGetPosts = (category, postid) => dispatch =>
     ? fetch(`${api}/posts/${postid}`, { headers })
         .then(res => res.json())
         .then(post => {
-          dispatch(acts.getPosts([post]));
-          dispatch(doGetComments(post.id));
+          post.id &&  dispatch(acts.getPosts([post]));
+          !post.deleted && dispatch(doGetComments(post.id));
         })
     : fetch(category ? `${api}/${category}/posts` : `${api}/posts`, { headers })
         .then(res => res.json())

@@ -11,7 +11,6 @@ import { SortButton, HomeButton } from "./Utils";
 import * as BlogAPI from "../server/dbApi";
 import { sortPost } from "../actions/index";
 
-
 class App extends Component {
   state = {
     category: "",
@@ -22,18 +21,29 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.props.getCategories()
-    this.props.getPosts(this.props.match.params.category, this.props.match.params.postid);
+    this.props.getCategories();
+    this.props.getPosts(
+      this.props.match.params.category,
+      this.props.match.params.postid
+    );
   }
 
-  componentWillReceiveProps(nextProps){
-    if (this.props.match.params.category !== nextProps.match.params.category || this.props.match.params.postid !== nextProps.match.params.postid){
-      this.props.getPosts(nextProps.match.params.category, nextProps.match.params.postid);
+  componentWillReceiveProps(nextProps) {
+    if (
+      this.props.match.params.category !== nextProps.match.params.category ||
+      this.props.match.params.postid !== nextProps.match.params.postid
+    ) {
+      this.props.getPosts(
+        nextProps.match.params.category,
+        nextProps.match.params.postid
+      );
     }
   }
 
   onCategorySelect(category) {
-    this.setState({ category: category }, () => this.props.history.push(`/${category}`));
+    this.setState({ category: category }, () =>
+      this.props.history.push(`/${category}`)
+    );
   }
 
   toggleModal() {
@@ -69,7 +79,7 @@ class App extends Component {
   onMessageDelete(type, message) {
     return type === "post"
       ? window.confirm("Do you wanna remove that post with all child comments?")
-        ? this.props.deletePost(message)
+        ? this.props.deletePost(message) && this.props.history.push("/")
         : null
       : window.confirm("Do you wanna remove that comment?")
         ? this.props.deleteComment(message)
@@ -99,46 +109,50 @@ class App extends Component {
             marginRight: 100
           }}
         >
-          {this.props.match.params.postid  ?
-            <Link to="/"><View style={{marginLeft: 10}}><HomeButton /></View></Link>
-            :
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              flexDirection: "row",
-              margin: 10
-            }}
-          >
-            <Button
-              style={{ marginRight: 50 }}
-              title="New post"
-              onPress={() => this.onPostEdit()}
-            />
-            <View style={{ marginRight: 50 }} />
-            <CategoryList
-              categories={this.props.categories}
-              value={this.state.category}
-              onCategorySelect={cat => this.onCategorySelect(cat)}
-            />
-            <Text>Sort by:{"   "}</Text>
-            <SortButton
-              column="score"
-              direction={
-                this.props.sortBy === "score" ? this.props.sortDirection : ""
-              }
-              onPress={(col, dir) => this.onSort(col, dir)}
-            />
-            <View style={{ marginRight: 10 }} />
-            <SortButton
-              column="date"
-              direction={
-                this.props.sortBy === "date" ? this.props.sortDirection : ""
-              }
-              onPress={(col, dir) => this.onSort(col, dir)}
-            />
-          </View>
-            }
+          {this.props.posts.length > 0 && this.props.match.params.postid ? (
+            <Link to="/">
+              <View style={{ marginLeft: 10 }}>
+                <HomeButton />
+              </View>
+            </Link>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                flexDirection: "row",
+                margin: 10
+              }}
+            >
+              <Button
+                style={{ marginRight: 50 }}
+                title="New post"
+                onPress={() => this.onPostEdit()}
+              />
+              <View style={{ marginRight: 50 }} />
+              <CategoryList
+                categories={this.props.categories}
+                value={this.state.category}
+                onCategorySelect={cat => this.onCategorySelect(cat)}
+              />
+              <Text>Sort by:{"   "}</Text>
+              <SortButton
+                column="score"
+                direction={
+                  this.props.sortBy === "score" ? this.props.sortDirection : ""
+                }
+                onPress={(col, dir) => this.onSort(col, dir)}
+              />
+              <View style={{ marginRight: 10 }} />
+              <SortButton
+                column="date"
+                direction={
+                  this.props.sortBy === "date" ? this.props.sortDirection : ""
+                }
+                onPress={(col, dir) => this.onSort(col, dir)}
+              />
+            </View>
+          )}
           <View>
             {this.props.posts.length > 0 ? (
               this.props.posts.map(post => (
@@ -148,7 +162,8 @@ class App extends Component {
                   compactView={this.props.match.params.postid ? false : true}
                   onAddPost={post => this.onPostEdit(post)}
                   onAddComment={(post, comment) =>
-                    this.onCommentEdit(post, comment)}
+                    this.onCommentEdit(post, comment)
+                  }
                   onDelete={(type, msg) => this.onMessageDelete(type, msg)}
                 />
               ))
@@ -158,7 +173,7 @@ class App extends Component {
                   flex: 1,
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "center", 
+                  alignItems: "center",
                   marginTop: 20
                 }}
               >
@@ -228,7 +243,8 @@ const mapStateToProps = ({ categories, posts, sort }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getPosts: (category, postid) => dispatch(BlogAPI.doGetPosts(category, postid)),
+    getPosts: (category, postid) =>
+      dispatch(BlogAPI.doGetPosts(category, postid)),
     getCategories: () => dispatch(BlogAPI.doGetCategories()),
     addPost: post => dispatch(BlogAPI.doAddPost(post)),
     editPost: post => dispatch(BlogAPI.doEditPost(post)),
